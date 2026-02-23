@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+.venv/
+venv/
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data (keep local; don't commit raw sensor CSVs by default)
+data/*.csv
+data/*.txt
+
+# Generated outputs
+phyphox_full_report/
+*.zip

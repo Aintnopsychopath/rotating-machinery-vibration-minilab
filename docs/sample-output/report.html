@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Phyphox Vibration Report (Hair Dryer)</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; line-height: 1.5; }
+    .card { border: 1px solid #ddd; border-radius: 10px; padding: 16px; margin: 16px 0; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    img { max-width: 100%; height: auto; border: 1px solid #eee; border-radius: 8px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background: #f6f6f6; }
+    code { background: #f6f6f6; padding: 2px 4px; border-radius: 4px; }
+    .small { color: #555; font-size: 0.95em; }
+  </style>
+</head>
+<body>
+  <h1>Vibration report (phone accelerometer + Python)</h1>
+  <p class="small">Generated: 2026-02-23 23:19</p>
+
+  <div class="card">
+    <h2>What this is</h2>
+    <p>
+      This report compares two hair-dryer runs (two different speed settings) using a phone’s accelerometer.
+      Think of it as a mini version of how engineers look at vibration signatures in rotating machinery (fans, pumps, turbines).
+    </p>
+    <p><b>Key takeaway:</b> Run B shows much stronger vibration energy than Run A. Both runs have a strong frequency peak below the phone’s Nyquist limit (~210 Hz), but because phones sample relatively slowly, the true rotation speed might be higher and appear as an alias (mirror frequency).</p>
+  </div>
+
+  <div class="card">
+    <h2>Quick numbers (easy to quote)</h2>
+    <table>
+      <tr><th>Run</th><th>Sampling rate</th><th>Nyquist limit</th><th>Dominant peak</th><th>RPM from peak</th><th>RPM if aliased (fs − peak)</th><th>Vibration strength (RMS)</th></tr>
+      <tr>
+        <td>Run A</td>
+        <td>420.96 Hz</td>
+        <td>210.48 Hz</td>
+        <td>182.69 Hz</td>
+        <td>10,961 RPM</td>
+        <td>14,296 RPM</td>
+        <td>0.912</td>
+      </tr>
+      <tr>
+        <td>Run B</td>
+        <td>420.96 Hz</td>
+        <td>210.48 Hz</td>
+        <td>161.26 Hz</td>
+        <td>9,675 RPM</td>
+        <td>15,582 RPM</td>
+        <td>2.422</td>
+      </tr>
+    </table>
+    <p class="small">
+      <b>Nyquist limit</b> is the highest frequency the phone can measure reliably (about half the sampling rate).
+      If the real rotation frequency is above this, the phone may show a mirrored (aliased) peak.
+      In industry, a tach/keyphasor is used to remove ambiguity.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>What the phone recorded (time plots)</h2>
+    <p>Raw signal shows everything: drift, hand effects, mounting effects, and vibration.</p>
+    <div class="grid">
+      <div><img src="01_runA_time_raw.png"/><p class="small">Run A raw.</p></div>
+      <div><img src="02_runB_time_raw.png"/><p class="small">Run B raw.</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Filtered vibration (cleaner view)</h2>
+    <p>
+      We remove slow drift and focus on a vibration band (about 5–200 Hz).
+      This is similar in spirit to filtering/conditioning done in real measurement chains.
+    </p>
+    <div class="grid">
+      <div><img src="03_runA_time_filtered.png"/><p class="small">Run A filtered.</p></div>
+      <div><img src="04_runB_time_filtered.png"/><p class="small">Run B filtered.</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>“How strong is the vibration?” (rolling RMS)</h2>
+    <p>
+      RMS is like “average vibration strength”. Rolling RMS shows if vibration is steady or fluctuating.
+    </p>
+    <div class="grid">
+      <div><img src="05_runA_rolling_rms.png"/><p class="small">Run A rolling RMS.</p></div>
+      <div><img src="06_runB_rolling_rms.png"/><p class="small">Run B rolling RMS.</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Where the vibration lives (frequency plots)</h2>
+    <p>
+      FFT/PSD show which frequencies dominate. For rotating machines, the main “rotation-related” component is often around 1X (once per revolution),
+      plus harmonics (2X, 3X) and other features (blade-pass, bearing-related tones).
+    </p>
+    <div class="grid">
+      <div><img src="09_fft_overlay.png"/><p class="small">FFT overlay: dominant peaks highlighted.</p></div>
+      <div><img src="10_psd_overlay.png"/><p class="small">PSD overlay: smoother energy comparison.</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Does the frequency change over time? (spectrogram)</h2>
+    <p>
+      Spectrogram is a “movie” of frequencies over time. If speed ramps up/down, you’ll see the bright bands move.
+    </p>
+    <div class="grid">
+      <div><img src="11_runA_spectrogram.png"/><p class="small">Run A spectrogram.</p></div>
+      <div><img src="12_runB_spectrogram.png"/><p class="small">Run B spectrogram.</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>One slide for non‑engineers (simple comparison)</h2>
+    <p>
+      This bar chart compares a few “easy-to-explain” metrics. If you’re presenting this informally, this is the quickest visual.
+    </p>
+    <div class="grid">
+      <div><img src="13_metrics_bar.png"/><p class="small">Run B has higher vibration energy (in this dataset).</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>How this connects to gas turbine vibration & acoustics</h2>
+    <ul>
+      <li><b>Same workflow:</b> sensor mounting → data acquisition → filtering → frequency analysis → compare operating points.</li>
+      <li><b>Measurement chain thinking:</b> sampling rate limits (Nyquist), noise, mounting stiffness, repeatability.</li>
+      <li><b>Industrial practice:</b> turbines typically add a tach/keyphasor and calibrated sensors, so 1X and orders are unambiguous.</li>
+    </ul>
+    <p class="small">
+      Limitations: phone MEMS accelerometer is not a calibrated industrial setup; mounting and airflow can add noise;
+      high-speed components above Nyquist may alias. Still: the approach demonstrates the diagnostic method.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Files included</h2>
+    <ul>
+      <li><code>summary_metrics.csv</code> — the numbers in a spreadsheet-friendly format</li>
+      <li>All PNG plots used in this report</li>
+    </ul>
+  </div>
+
+</body>
+</html>
