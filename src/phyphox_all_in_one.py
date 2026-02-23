@@ -13,8 +13,8 @@ import matplotlib.pyplot as plt
 from scipy import signal, stats
 from datetime import datetime
 
-FILE_A = "Raw Data Speed 1.csv"
-FILE_B = "Raw Data Speed 2.csv"
+FILE_A = "data/Raw Data Speed 1.csv"
+FILE_B = "data/Raw Data Speed 2.csv"
 OUT_DIR = "phyphox_full_report"
 
 os.makedirs(OUT_DIR, exist_ok=True)
@@ -87,7 +87,10 @@ def band_energy(f, pxx, f1, f2):
     m = (f >= f1) & (f <= f2)
     if np.sum(m) < 2:
         return float("nan")
-    return float(np.trapz(pxx[m], f[m]))
+    y = pxx[m]
+    x = f[m]
+    area_fn = getattr(np, "trapezoid", None) or getattr(np, "trapz")
+    return float(area_fn(y, x))
 
 def rolling_rms(x, fs, win_s=1.0):
     n = max(5, int(win_s * fs))
