@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using this metadata."
+title: "Phyphox Vibration Mini-Lab"
+type: software
+authors:
+  - family-names: Sivaprasadan
+    given-names: Abhijith
+repository-code: "https://github.com/Aintnopsychopath/rotating-machinery-vibration-minilab"
+license: MIT
+
